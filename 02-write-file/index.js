@@ -25,25 +25,3 @@ rl.on('SIGINT', () => {
 })
 
 
-// rl.on('data', data => {
-//     if (data === 'exit') {
-//         stdout.write('goodbye my friend');
-//     exit();
-//     }
-// })
-// const out = fs.createWriteStream(path.join(__dirname, 'out.txt'));
-
-// stdout.write('Hello my friend\n');
-// rl.on('line', data => {
-//     if (data !== 'exit') {
-//         out.write(data + '\n');
-        
-//     } else {
-//         stdout.write('goodbye');
-//         rl.close();
-//     }
-// })
-// rl.on('SIGINT', () => {
-//     stdout.write('goodbye');
-//     rl.close();
-// })
