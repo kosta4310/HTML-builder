@@ -3,47 +3,37 @@ const path = require('path');
 const { stdin, stdout} = require('process');
 const { readdir } = require('fs/promises');
 
-
-
-fs.mkdir(path.join(__dirname, 'files-copy'), {recursive: true}, (err) => {
-    if (err) throw err;
-});
-
-
-
-(async function (track) {
+const pathFrom = path.join(__dirname, 'files');
+const pathTo = path.join(__dirname, 'files-copy');
+async function copyDir(pathFrom, pathTo) {
     try {
-        const dirents = await readdir(track, { withFileTypes: true });
-        for (const dirent of dirents) {
-            fs.unlink(path.join(`${track}`, `${dirent.name}`));
-        }
+        await fs.rm(pathTo, { force: true, recursive: true });
+        await fs.mkdir(pathTo, { recursive: true });
+        await copyFilesAndFolder(pathFrom, pathTo);
     } catch (error) {
         console.log(error);
     }
-})(path.join(__dirname, 'files-copy'));
-
-
-
-
-async function readDirectory(track) {
-    try {
-        const dirents = await readdir(track, { withFileTypes: true });
-        if (dirents.length !== 0) {
-            for (const dirent of dirents) {
+    async function copyFilesAndFolder(trackFrom, trackTo) {
+            try {
+                const dirents = await readdir(trackFrom, { withFileTypes: true });
+                if (dirents.length !== 0) {
+                    for (const dirent of dirents) {
+                    let tempPathFrom = path.join(trackFrom, dirent.name);
+                    let tempPathTo = path.join(trackTo, dirent.name);
                 if (dirent.isFile()) {
-                    
-                    let strPath = path.join(track, dirent.name);
-                    fs.copyFile(strPath, strPath.replace('files', 'files-copy'));
+                    fs.copyFile(tempPathFrom, tempPathTo);
                 } else {
-                    fs.mkdir(path.join(track, dirent.name), {recursive: true}, (err) => {
+                    fs.mkdir(tempPathTo, {recursive: true}, (err) => {
                         if (err) throw err;
                     });
+                    copyFilesAndFolder(tempPathFrom, tempPathTo);
                 }
             }
-        } else return;
-        
-    } catch (error) {
-        console.log(error);
+            } else return;
+            } catch (error) {
+                console.log(error);
+            }
     }
 }
-readDirectory(path.join(__dirname, 'files'));
+copyDir(pathFrom, pathTo);
+
