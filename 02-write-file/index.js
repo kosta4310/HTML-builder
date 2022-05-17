@@ -20,7 +20,7 @@ rl.on('line', (data) => {
     };
 });
 rl.on('SIGINT', () => {
-    stdout.write('goodbye my friend');
+    stdout.write('Goodbye my friend');
     exit();
 })
 
