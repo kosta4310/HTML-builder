@@ -7,6 +7,7 @@ const { readdir } = require('fs/promises');
 function getParamsFiles(track) {
     let basename = path.basename(track);
     stat(track, (err, stats) => {
+        if (err) throw err;
         console.log(basename.replace('.', ' - ') + " - " + stats.size);
     
     })
@@ -21,7 +22,7 @@ async function getFiles (track) {
                     getParamsFiles(path.join(track, `${dirent.name}`));
                 }
                 
-            } else getFiles(path.join(track, `${dirent.name}`));
+            } /*else getFiles(path.join(track, `${dirent.name}`));*/
           
         }
     }
