@@ -1,9 +1,12 @@
 const fs = require('fs/promises');
+
 const fss = require('fs');
 const path = require('path');
 const { stdin, stdout} = require('process');
 const { readdir } = require('fs/promises');
 
+
+// Первый вариант на промисах
 async function merge() {
    try {
        await fs.rm(path.join(__dirname, 'project-dist', 'bundle.css'), { force: true });
@@ -19,3 +22,24 @@ async function merge() {
    }
 }
 merge();
+
+// Второй вариант с использованием callback
+
+// fss.rm(path.resolve(__dirname, './project-dist/bundle.css'), { force: true }, (err) => {
+//     if (err) console.log(err);
+// });
+// fss.readdir(path.join(__dirname, 'styles'), { withFileTypes: true }, (err, dirents) => {
+//     if (err) {
+//         throw err;
+//     }
+//     dirents.forEach(dirent => {
+//         if (dirent.isFile && (path.extname(dirent.name) === '.css')) {
+//             fss.readFile(path.resolve(__dirname, `./styles/${dirent.name}`), { encoding: 'utf-8' }, (err, data) => {
+//                 if (err) throw err;
+//                 fss.appendFile(path.resolve(__dirname, './project-dist/bundle.css'), data, (err) => {
+//                     if (err) throw err;
+//                 } )
+//             })
+//         }
+//     });
+// })
