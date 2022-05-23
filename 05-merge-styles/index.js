@@ -23,7 +23,7 @@ async function merge() {
 }
 merge();
 
-// Второй вариант с использованием callback
+// Второй вариант с использованием callback, если вдруг не работает на промисах
 
 // fss.rm(path.resolve(__dirname, './project-dist/bundle.css'), { force: true }, (err) => {
 //     if (err) console.log(err);
