@@ -1,27 +1,19 @@
 const fs = require('fs');
 const path = require('path');
-const readline = require('readline');
-const { stdin: input, stdout: output, stdout, stdin, exit } = require('process');
-const rl = readline.Interface({ input, output });
+const { stdout, stdin, exit } = require('process');
 
-fs.writeFile(path.join(__dirname, 'out.txt'), '',(err) => {
-    if (err) throw err;
-});
-stdout.write('hello my friend\n');
-rl.on('line', (data) => {
-    if (data !== 'exit') {
-        
-        fs.appendFile(path.join(__dirname, 'out.txt'), `${data + '\n'}`, (err) => {
-            if (err) throw err;
-        });
-    } else {
-        stdout.write('Goodbye my friend');
-        rl.close();
-    };
-});
-rl.on('SIGINT', () => {
-    stdout.write('Goodbye my friend');
-    exit();
+const write = fs.createWriteStream(path.join(__dirname, 'out.txt'));
+write.on('error', (err) => { console.log(`Поймали ошибку ${err}`)});
+stdin.on('data', data => {
+    let str = data.toString().trim();
+    if (str === 'exit') {
+        exit();
+    }
+    write.write(`${str}\n`);
 })
-
+stdout.write('Hello my friend\n');
+process.on('SIGINT', exit);
+process.on('exit', () => {
+    stdout.write('Goodbye my friend')
+})
 
