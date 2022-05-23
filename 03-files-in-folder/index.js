@@ -8,7 +8,7 @@ function getParamsFiles(track) {
     let basename = path.basename(track);
     stat(track, (err, stats) => {
         if (err) throw err;
-        console.log(basename.replace('.', ' - ') + " - " + stats.size);
+        console.log(basename.replace('.', ' - ') + " - " + stats.size + 'b');
     
     })
 }
