@@ -38,30 +38,7 @@ Promise.all([template, components]).then(values => {
     
 });
 
-// Promise.all([template, footer, articles, header]).then(values => {
-    
-//     template.then(temp => {
-//         templateStr = temp;
-        
-//     }).then(temp => {
-        
-//         footer.then(footer => {
-//             templateStr = rep('footer', footer);
-            
-//         })
-//     }).then(temp => {
-//         articles.then(articles => {
-//             templateStr = rep('articles', articles);
-                
-//         })
-//     }).then(temp => {
-//         header.then(header => {
-//             templateStr = rep('header', header);
-//             writeHtml(templateStr);
-//         })
-//     })
-    
-// });
+
 
 function rep2(name, context) {
     let c =  templateStr.replace(`{{${name}}}`, context);
@@ -87,7 +64,7 @@ async function merge() {
        await fs.mkdir(path.join(__dirname, 'project-dist'), {recursive: true});
        await fs.rm(path.join(__dirname, 'project-dist', 'style.css'), { force: true });
        const dirents = await fs.readdir(path.join(__dirname, 'styles'), { withFileTypes: true });
-       for (const dirent of dirents) {
+       for (const dirent of dirents.reverse()) {
            if (dirent.isFile && (path.extname(dirent.name) === '.css')) {
                const data = await fs.readFile(path.join(__dirname, 'styles', dirent.name), { encoding: 'utf-8' });
                fs.appendFile(path.join(__dirname, 'project-dist', 'style.css'), data);
@@ -162,12 +139,4 @@ async function findComponents() {
         console.log(error);
     }
 }
-
-
-               
-            
-
-
-
-
 
