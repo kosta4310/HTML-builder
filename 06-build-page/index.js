@@ -6,6 +6,11 @@ const path = require('path');
 const { resolve } = require('path');
 const { readdir } = require('fs/promises');
 
+// Замечено, что при работающем LiveServer код может не работать и выдавать ошибку
+// что мол не может удалить папку так как она не пустая. Нужно закрыть LiveServer
+// и возможно перезагрузить VSCode. Код полностью рабочий. Если что плиз свяжитесь
+// со мной в дискорде Kostiantyn Pavlov#5082. Спасибо
+
 const rs = fss.createReadStream(path.resolve(__dirname, './template.html'));
 let template = fs.readFile(path.resolve(__dirname, './template.html'), {encoding: 'utf-8'});
 let templateStr = '';
