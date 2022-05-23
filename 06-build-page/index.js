@@ -9,36 +9,65 @@ const { readdir } = require('fs/promises');
 const rs = fss.createReadStream(path.resolve(__dirname, './template.html'));
 let template = fs.readFile(path.resolve(__dirname, './template.html'), {encoding: 'utf-8'});
 let templateStr = '';
+let arrayNames = [];
+let arrayComponents = [];
 const footer = readComponents('footer.html');
 const articles = readComponents('articles.html');
 const header = readComponents('header.html');
 let footerStr = '';
 const articlesStr = '';
 const headerStr = '';
-Promise.all([template, footer, articles, header]).then(values => {
-    
-    template.then(temp => {
+const components = findComponents();
+
+Promise.all([template, components]).then(values => {
+    template.then((temp) => {
         templateStr = temp;
-        
-    }).then(temp => {
-        
-        footer.then(footer => {
-            templateStr = rep('footer', footer);
-            
-        })
-    }).then(temp => {
-        articles.then(articles => {
-            templateStr = rep('articles', articles);
+        for (let i = 0; i < arrayNames.length; i++) {
+            let nameComponent = arrayNames[i];
+            let component = '';
+            arrayComponents[i].then(value => {
+                component = value;
+                templateStr = rep2(nameComponent, component);
                 
-        })
-    }).then(temp => {
-        header.then(header => {
-            templateStr = rep('header', header);
-            writeHtml(templateStr);
-        })
-    })
+            });
+            
+        }
+        
+        
+    }).then((() => writeHtml(templateStr)));
     
 });
+
+// Promise.all([template, footer, articles, header]).then(values => {
+    
+//     template.then(temp => {
+//         templateStr = temp;
+        
+//     }).then(temp => {
+        
+//         footer.then(footer => {
+//             templateStr = rep('footer', footer);
+            
+//         })
+//     }).then(temp => {
+//         articles.then(articles => {
+//             templateStr = rep('articles', articles);
+                
+//         })
+//     }).then(temp => {
+//         header.then(header => {
+//             templateStr = rep('header', header);
+//             writeHtml(templateStr);
+//         })
+//     })
+    
+// });
+
+function rep2(name, context) {
+    let c =  templateStr.replace(`{{${name}}}`, context);
+    return c;
+}
+
  function rep(string, str) {
     let c =  templateStr.replace(`{{${string}}}`, str);
     return c;
@@ -46,7 +75,7 @@ Promise.all([template, footer, articles, header]).then(values => {
 async function writeHtml(html) {
     try {
         await fs.mkdir(path.join(__dirname, 'project-dist'), {recursive: true});
-        // await fs.rm(path.join(__dirname, 'project-dist', 'index.html'), { force: true });
+        await fs.rm(path.join(__dirname, 'project-dist', 'index.html'), { force: true });
         await fs.writeFile(path.resolve(__dirname, './project-dist/index.html'),html);
     } catch (error) {
         console.log(error);
@@ -117,12 +146,15 @@ async function readComponents(fileName) {
 }
 async function findComponents() {
     try {
-        let arrayComponents = [];
-
+        
+        
         const dirents = await fs.readdir(path.join(__dirname, 'components'), { withFileTypes: true });
        for (const dirent of dirents) {
            if (dirent.isFile && (path.extname(dirent.name) === '.html')) {
                arrayComponents.push(readComponents(dirent.name));
+               let name = (dirent.name).split('');
+               name.splice(-5,5).join('');
+               arrayNames.push(name.join(''));
            }
         }
         return Promise.all(arrayComponents);
@@ -130,7 +162,7 @@ async function findComponents() {
         console.log(error);
     }
 }
-findComponents().then((value) => console.log(value));
+
 
                
             
