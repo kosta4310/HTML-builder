@@ -9,9 +9,9 @@ const { readdir } = require('fs/promises');
 const rs = fss.createReadStream(path.resolve(__dirname, './template.html'));
 let template = fs.readFile(path.resolve(__dirname, './template.html'), {encoding: 'utf-8'});
 let templateStr = '';
-const footer = readComponents('footer');
-const articles = readComponents('articles');
-const header = readComponents('header');
+const footer = readComponents('footer.html');
+const articles = readComponents('articles.html');
+const header = readComponents('header.html');
 let footerStr = '';
 const articlesStr = '';
 const headerStr = '';
@@ -106,19 +106,32 @@ copyDir(pathFrom, pathTo);
 merge();
 
 
-
-
 async function readComponents(fileName) {
     
     try {
-        return fs.readFile(path.resolve(__dirname, `./components/${fileName}.html`), {encoding: 'utf-8'});
+        return fs.readFile(path.resolve(__dirname, `./components/${fileName}`), {encoding: 'utf-8'});
     } catch (error) {
         throw error;
     }
    
 }
+async function findComponents() {
+    try {
+        let arrayComponents = [];
 
-               
+        const dirents = await fs.readdir(path.join(__dirname, 'components'), { withFileTypes: true });
+       for (const dirent of dirents) {
+           if (dirent.isFile && (path.extname(dirent.name) === '.html')) {
+               arrayComponents.push(readComponents(dirent.name));
+           }
+        }
+        return Promise.all(arrayComponents);
+    } catch (error) {
+        console.log(error);
+    }
+}
+findComponents().then((value) => console.log(value));
+
                
             
 
